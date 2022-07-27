@@ -1,8 +1,9 @@
-const random = 0.33
-const trainSize = 10000
-const testSize = 2000
+const fs = require('fs');
+const synaptic = require('synaptic')
 
-export const gridConverter = (grid) => {
+const random = 0.33
+
+const gridConverter = (grid) => {
     let arr = grid.map(row => {
         return row.map(cell => {
             if (cell === ""){
@@ -39,7 +40,7 @@ const makeGrid = () => {
     }   
 }
 
-export const solveGrid = (grid) => {
+const solveGrid = (grid) => {
     if (grid[0][0] === "1" || grid[4][4] === "1"){
         return [0]
     }
@@ -97,7 +98,7 @@ export const solveGrid = (grid) => {
     
 }
 
-const trainingSet = (test) => {
+const training = (test) => {
     let set = []
     for (let i = 0; i < test; i++){
         let grid = makeGrid()
@@ -111,7 +112,58 @@ const trainingSet = (test) => {
     return set
 }
 
+const trainSize = 10
+const testSize = 2
 
-export const testSet = trainingSet(testSize)
+let testSet = training(testSize)
 
-export default trainingSet(trainSize)
+let trainingSet =  training(trainSize)
+
+trainingSet.forEach(set => {
+    set.input = gridConverter(set.input)
+})
+
+let perceptron = new synaptic.Architect.Perceptron(25,20,1);
+    
+let trainer = new synaptic.Trainer(perceptron)
+
+let learningRate = 0.01
+
+const rate = (iterations,error) => {
+  if (iterations < 5){
+    return 0.1
+  }
+  return  learningRate / (1 + iterations * 0.001)
+}
+
+
+
+trainer.train(trainingSet,{
+    rate,
+    iterations: 2000,
+    error: 0.0000000005,
+    shuffle: true,
+    log: 1000,
+    cost: synaptic.Trainer.cost.CROSS_ENTROPY
+});
+
+let test = testSet.reduce( (total, grid) => {
+  let answer = perceptron.activate(gridConverter(grid.input))
+  if (Math.round(answer) === grid.output[0]){
+      return total + 1
+    }
+  else {
+    return total
+  }
+}, 0)
+
+let accuracy = test / testSet.length
+
+console.log("accuracy:", accuracy)
+
+let save = JSON.stringify(perceptron)
+
+fs.writeFile('file.txt', save, function (err) {
+  if (err) throw err;
+  console.log('Saved!');
+});
