@@ -6,15 +6,15 @@ let perceptron = new synaptic.Architect.Perceptron(10,10,10,3);
 let trainingSet = [ //colors by wavelength
   {
     input: 380, //violet
-    output: [131,0,181]
+    output: [97,0,97]
   },
   {
     input: 420, //indigo
     output: [106,0,255]
   },
   {
-    input: 450,  //blue
-    output: [0,70,255]
+    input: 440,  //blue
+    output: [0,0,255]
   },
   {
     input: 490,  //cyan
@@ -41,9 +41,57 @@ let trainingSet = [ //colors by wavelength
     output: [255,119,0]
   },
   {
-    input: 645, //bright-red
+    input: 645, //red
     output: [255,0,0]
-  }
+  },
+  {
+    input: 400, //fill in gaps
+    output: [131,0,181]
+  },
+  {
+    input: 425, 
+    output: [84,0,255]
+  },
+  {
+    input: 433, 
+    output: [46,0,255]
+  },
+  {
+    input: 450, 
+    output: [0,0,255]
+  },
+  {
+    input: 475,  
+    output: [0,169,255]
+  },
+  {
+    input: 480,  
+    output: [0,213,255]
+  },
+  {
+    input: 495,
+    output: [0,255,203]
+  },
+  {
+    input: 505, 
+    output: [0,255,84]
+  },
+  {
+    input: 530,
+    output: [94,255,0]
+  },
+  {
+    input: 565, 
+    output: [210,255,0]
+  },
+  {
+    input: 600, 
+    output: [255,190,0]
+  },
+  {
+    input: 630,
+    output: [255,57,0]
+  },
 ]
 
 const trainerTranslator = (arr) => {
@@ -70,8 +118,14 @@ const decimaltoInt = (arr) => {
   })
 }
 
+let prevError = 10
+let learningRate = 0.1
+
 const rate = (iterations,error) => {
-  return  0.15 *(20000 - iterations)/20000
+  if (iterations < 5){
+    return 0.1
+  }
+  return  learningRate / (1 + iterations * 0.001)
 }
 
 trainingSet = trainerTranslator(trainingSet)
@@ -81,9 +135,9 @@ let trainer = new synaptic.Trainer(perceptron)
 trainer.train(trainingSet,{
 	rate: rate,
 	iterations: 20000,
-	error: 0.05,
+	error: -1,
 	shuffle: true,
-	log: 10000,
+	log: 1000,
 	cost: synaptic.Trainer.cost.CROSS_ENTROPY
 });
 

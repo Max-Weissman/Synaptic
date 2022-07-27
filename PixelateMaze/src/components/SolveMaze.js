@@ -7,17 +7,35 @@ trainingSet.forEach(set => {
     set.input = gridConverter(set.input)
 })
 
-let perceptron = new synaptic.Architect.Perceptron(25,10,1);
+let perceptron = new synaptic.Architect.Perceptron(25,20,1);
     
 let trainer = new synaptic.Trainer(perceptron)
 
+let prevError = 0.1
+let learningRate = 0.01
+
+const rate = (iterations,error) => {
+  if (error < prevError * 0.9){
+      prevError = error
+      learningRate *= 0.99
+      if (learningRate < 0.00000000000000000000000000000000000000000000000000000000000009){
+          prevError = 0
+          learningRate = 0
+      }
+  }
+  else {
+      prevError = 0.1
+  }
+  return learningRate
+}
+
 trainer.train(trainingSet,{
-    rate: 0.1,
-    iterations: 20000,
-    error: 0.05,
+    rate,
+    iterations: 10000,
+    error: 0.0000000005,
     shuffle: true,
     log: 1000,
-    cost: synaptic.Trainer.cost.CROSS_ENTROPY
+    cost: synaptic.Trainer.cost.BINARY
 });
 
 export default (props) => {
@@ -27,10 +45,10 @@ export default (props) => {
     let answer = perceptron.activate(gridConverter(props.grid))
     console.log(answer)
     if (answer > 0.5){
-        store.dispatch(mazeAnswer("This Maze is solveable"))
+        store.dispatch(mazeAnswer("I calculate that this maze is solveable"))
     }
     else {
-        store.dispatch(mazeAnswer("This Maze is not solveable"))
+        store.dispatch(mazeAnswer("I calculate that this maze is not solveable"))
     }
   }    
     
