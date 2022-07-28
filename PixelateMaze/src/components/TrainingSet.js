@@ -1,6 +1,6 @@
 const random = 0.33
-const trainSize = 10000
-const testSize = 2000
+const trainSize = 100
+const testSize = 20
 
 export const gridConverter = (grid) => {
     let arr = grid.map(row => {
@@ -18,25 +18,6 @@ export const gridConverter = (grid) => {
         newArr = newArr.concat(row)
     })
     return newArr
-}
-
-const makeGrid = () => {
-    for (let n = 0; n < 100 ; n++){
-        let grid = []
-        for (let i = 0; i < 5; i++){
-          let arr = []
-          for (let j = 0; j < 5; j++){
-            if (Math.random() > random){
-                arr.push("")
-            }
-            else{
-                arr.push("1")
-            }
-          }
-          grid.push(arr)
-        }
-    return grid
-    }   
 }
 
 export const solveGrid = (grid) => {
@@ -96,22 +77,3 @@ export const solveGrid = (grid) => {
     return [0]
     
 }
-
-const trainingSet = (test) => {
-    let set = []
-    for (let i = 0; i < test; i++){
-        let grid = makeGrid()
-        set.push(
-            {
-                input: grid,
-                output: solveGrid(grid)
-            }
-        )
-    }
-    return set
-}
-
-
-export const testSet = trainingSet(testSize)
-
-export default trainingSet(trainSize)

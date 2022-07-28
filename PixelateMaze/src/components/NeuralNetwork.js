@@ -2,6 +2,8 @@ const fs = require('fs');
 const synaptic = require('synaptic')
 
 const random = 0.33
+const trainSize = 100000
+const testSize = 20000
 
 const gridConverter = (grid) => {
     let arr = grid.map(row => {
@@ -112,9 +114,6 @@ const training = (test) => {
     return set
 }
 
-const trainSize = 10
-const testSize = 2
-
 let testSet = training(testSize)
 
 let trainingSet =  training(trainSize)
@@ -143,7 +142,7 @@ trainer.train(trainingSet,{
     iterations: 2000,
     error: 0.0000000005,
     shuffle: true,
-    log: 1000,
+    log: 100,
     cost: synaptic.Trainer.cost.CROSS_ENTROPY
 });
 
@@ -161,9 +160,9 @@ let accuracy = test / testSet.length
 
 console.log("accuracy:", accuracy)
 
-let save = JSON.stringify(perceptron)
+let save = 'export default ' + JSON.stringify(perceptron.toJSON())
 
-fs.writeFile('file.txt', save, function (err) {
+fs.writeFile('file.js', save, function (err) {
   if (err) throw err;
   console.log('Saved!');
 });

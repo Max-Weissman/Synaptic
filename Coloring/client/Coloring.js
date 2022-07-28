@@ -118,7 +118,6 @@ const decimaltoInt = (arr) => {
   })
 }
 
-let prevError = 10
 let learningRate = 0.1
 
 const rate = (iterations,error) => {
@@ -134,7 +133,7 @@ let trainer = new synaptic.Trainer(perceptron)
 
 trainer.train(trainingSet,{
 	rate: rate,
-	iterations: 20000,
+	iterations: 4000,
 	error: -1,
 	shuffle: true,
 	log: 1000,
